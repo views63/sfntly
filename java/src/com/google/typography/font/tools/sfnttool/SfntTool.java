@@ -27,6 +27,8 @@ import com.google.typography.font.tools.subsetter.HintStripper;
 import com.google.typography.font.tools.subsetter.RenumberingSubsetter;
 import com.google.typography.font.tools.subsetter.Subsetter;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -69,6 +71,14 @@ public class SfntTool {
           tool.strip = true;
         } else if (option.equals("s") || option.equals("string")) {
           tool.subsetString = args[i + 1];
+          i++;
+        } else if (option.equals("f") || option.equals("string")) {
+          File filename = new File(args[i + 1]);
+          InputStreamReader reader = new InputStreamReader(new FileInputStream(filename), "utf-8");
+          BufferedReader br = new BufferedReader(reader);
+          String line = br.readLine();
+          tool.subsetString = line;
+          br.close();
           i++;
         } else if (option.equals("w") || option.equals("woff")) {
           tool.woff = true;
@@ -114,13 +124,12 @@ public class SfntTool {
     System.out.println("\t-x,-mtx\t Enable Microtype Express compression for EOT format");
   }
 
-  public void subsetFontFile(File fontFile, File outputFile, int nIters)
-      throws IOException {
+  public void subsetFontFile(File fontFile, File outputFile, int nIters) throws IOException {
     FontFactory fontFactory = FontFactory.getInstance();
     FileInputStream fis = null;
     try {
       fis = new FileInputStream(fontFile);
-      byte[] fontBytes = new byte[(int)fontFile.length()];
+      byte[] fontBytes = new byte[(int) fontFile.length()];
       fis.read(fontBytes);
       Font[] fontArray = null;
       fontArray = fontFactory.loadFonts(fontBytes);
@@ -136,7 +145,8 @@ public class SfntTool {
           List<Integer> glyphs = GlyphCoverage.getGlyphCoverage(font, subsetString);
           subsetter.setGlyphs(glyphs);
           Set<Integer> removeTables = new HashSet<Integer>();
-          // Most of the following are valid tables, but we don't renumber them yet, so strip
+          // Most of the following are valid tables, but we don't renumber them yet, so
+          // strip
           removeTables.add(Tag.GDEF);
           removeTables.add(Tag.GPOS);
           removeTables.add(Tag.GSUB);
@@ -148,8 +158,8 @@ public class SfntTool {
           removeTables.add(Tag.DSIG);
           removeTables.add(Tag.vhea);
           // AAT tables, not yet defined in sfntly Tag class
-          removeTables.add(Tag.intValue(new byte[]{'m', 'o', 'r', 't'}));
-          removeTables.add(Tag.intValue(new byte[]{'m', 'o', 'r', 'x'}));
+          removeTables.add(Tag.intValue(new byte[] { 'm', 'o', 'r', 't' }));
+          removeTables.add(Tag.intValue(new byte[] { 'm', 'o', 'r', 'x' }));
           subsetter.setRemoveTables(removeTables);
           newFont = subsetter.subset().build();
         }
