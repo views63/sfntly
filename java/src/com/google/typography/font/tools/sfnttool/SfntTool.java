@@ -117,6 +117,7 @@ public class SfntTool {
     System.out.println("Prototype font subsetter");
     System.out.println("\t-?,-help\tprint this help information");
     System.out.println("\t-s,-string\t String to subset");
+    System.out.println("\t-f,-string\t load strings from file of fiter");
     System.out.println("\t-b,-bench\t Benchmark (run 10000 iterations)");
     System.out.println("\t-h,-hints\t Strip hints");
     System.out.println("\t-w,-woff\t Output WOFF format");
